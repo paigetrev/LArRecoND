@@ -422,7 +422,13 @@ void HierarchyAnalysisAlgorithm::EventAnalysisOutput(const LArHierarchyHelper::M
                         mcParentId = (pParent != nullptr) ? reinterpret_cast<intptr_t>(pParent->GetUid()) : -999;
                     }
                 }
+                std::cout << "-----Begin Particle Info: ------" << std::endl;
+                std::cout << "isPrimary: " << isPrimary << std::endl;
+                std::cout << "mcId: " << mcId << std::endl;
+                std::cout << "mcLocalId: " << mcLocalId << std::endl;
+                std::cout << "mcPDG: " << mcPDG << std::endl;
 
+               
                 mcParentPDGVect.emplace_back(mcParentPDG);
                 mcParentIdVect.emplace_back(mcParentId);
 
