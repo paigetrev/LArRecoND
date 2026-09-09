@@ -229,7 +229,6 @@ void HierarchyAnalysisAlgorithm::EventAnalysisOutput(const LArHierarchyHelper::M
     {
         // Slice id = root PFO number
         ++sliceId;
-
         // Get (first) root vertex
         const VertexList &rootVertices{pRoot->GetVertexList()};
         const Vertex *pRootVertex = (rootVertices.size() > 0) ? (*rootVertices.begin()) : nullptr;
@@ -267,7 +266,7 @@ void HierarchyAnalysisAlgorithm::EventAnalysisOutput(const LArHierarchyHelper::M
 
                 // Increment clusterId
                 clusterId++;
-
+                std::cout << clusterId << std::endl;
                 // Find first and last cluster hit points
                 CartesianVector first(max, max, max), last(max, max, max);
                 LArClusterHelper::GetExtremalCoordinates(pCluster3D, first, last);
@@ -345,7 +344,6 @@ void HierarchyAnalysisAlgorithm::EventAnalysisOutput(const LArHierarchyHelper::M
                 // Since all PFOs are tracks for now, this will always be muon
                 const int recoPDG = (isShower == 0) ? MU_MINUS : E_MINUS;
                 recoPDGVect.emplace_back(recoPDG);
-
                 // Is this a reconstructed primary PFO?
                 isRecoPrimaryVect.emplace_back(isRecoPrimary);
 

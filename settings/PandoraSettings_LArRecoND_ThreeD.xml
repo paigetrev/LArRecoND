@@ -1,6 +1,6 @@
 <pandora>
     <!-- GLOBAL SETTINGS -->
-    <IsMonitoringEnabled>true</IsMonitoringEnabled>
+    <IsMonitoringEnabled>false</IsMonitoringEnabled>
     <ShouldDisplayAlgorithmInfo>false</ShouldDisplayAlgorithmInfo>
     <SingleHitTypeClusteringMode>true</SingleHitTypeClusteringMode>
 
@@ -68,7 +68,7 @@
 	<PfoListName>RecreatedPfos</PfoListName>
         <AnalysisFileName>LArRecoND.root</AnalysisFileName>
         <AnalysisTreeName>LArRecoND</AnalysisTreeName>
-        <FoldToPrimaries>false</FoldToPrimaries>
+        <FoldToPrimaries>true</FoldToPrimaries>
         <FoldToLeadingShowers>false</FoldToLeadingShowers>
 	    <FoldDynamic>false</FoldDynamic>
         <MinPurity>0.5</MinPurity>
