@@ -128,10 +128,42 @@ StatusCode HierarchyAnalysisAlgorithm::Run()
     LArHierarchyHelper::MatchInfo matchInfo(mcHierarchy, recoHierarchy, quality);
     LArHierarchyHelper::MatchHierarchies(matchInfo);
     matchInfo.Print(mcHierarchy);
+    //std::cout << "Calo Hit List Size: " << pCaloHitList->size() << std::endl;
+    std::cout << "MCParticle List Size: " << pMCParticleList->size()<<std::endl;
+    int n_prim = 0;
+    int nu_uid = 0;
+    for(auto particle : *pMCParticleList){
+       
+       MCParticleList parents = particle->GetParentList();
+       bool isPrimary = LArMCParticleHelper::IsPrimary(particle);
+      // std::cout << "Parent list Size:" << parents.size() << std::endl;
+       
+       if(parents.size() < 1){
+         std::cout << "Interaction Had: " << n_prim << " Primaries" << std::endl;
+         nu_uid = reinterpret_cast<intptr_t>(particle->GetUid());
+         n_prim = 0;
+         std::cout << "----New Interaction----" << std::endl;
+       }
+       std::cout << "Is Particle Primary? " << isPrimary << " Particle PDG: " << particle->GetParticleId() << " Particle Uid: " << reinterpret_cast<intptr_t>(particle->GetUid()) << " Particle Energy: " << particle->GetEnergy() << std::endl;
 
+      if(parents.size() > 0){
+       
+          for(auto parent : parents){
+           int parent_uid = reinterpret_cast<intptr_t>(parent->GetUid());  
+           std::cout << "Parent PDG: " << parent->GetParticleId() << " Parent Uid: " << parent_uid << std::endl;
+         if(parent_uid == nu_uid){
+                n_prim ++;
+          }
+        }
+        
+      }
+    
+    }
+    
+    
     // Analysis PFO & matched reco-MC output
     this->EventAnalysisOutput(matchInfo);
-
+    //std::cout <<"Hi" << std::endl;
     return STATUS_CODE_SUCCESS;
 }
 
@@ -163,14 +195,19 @@ void HierarchyAnalysisAlgorithm::SetEventRunMCIdInfo()
                 thisHits = m_nhits;
             }
         }
+        std::cout << "MC ID MAP SIZE: " << m_mcIDs->size() << std::endl;
 
         // Fill the Id map
         if (m_gotMCEventInput)
         {
-            for (size_t i = 0; i < m_mcIDs->size(); i++)
+            for (size_t i = 0; i < m_mcIDs->size(); i++){
                 m_mcIdMap[(*m_mcIDs)[i]] = (*m_mcLocalIDs)[i];
+                std::cout << "mcLocalID " << (*m_mcLocalIDs)[i] << std::endl;
+                std::cout << "mcID " << (*m_mcIDs)[i] << std::endl;
+        
+            }
+            }
         }
-    }
     else
         // Use the algorithm run count number
         m_event = m_count;
@@ -409,6 +446,9 @@ void HierarchyAnalysisAlgorithm::EventAnalysisOutput(const LArHierarchyHelper::M
                 const CartesianVector mcMomentum = (pLeadingMC != nullptr) ? pLeadingMC->GetMomentum() : CartesianVector(0.f, 0.f, 0.f);
                 const CartesianVector mcVertex = (pLeadingMC != nullptr) ? pLeadingMC->GetVertex() : CartesianVector(max, max, max);
                 const CartesianVector mcEndPoint = (pLeadingMC != nullptr) ? pLeadingMC->GetEndpoint() : CartesianVector(max, max, max);
+                std::cout << "*****START SAVED PANDORA VALUES*****" << std::endl;
+                std::cout << "mcId: " << mcId << std::endl;
+                std::cout << "mcLocalId: " << mcLocalId << std::endl;
 
                 // Retrieve MC parent info
                 int mcParentPDG{-999}, mcParentId{-999};
