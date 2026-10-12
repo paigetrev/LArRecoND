@@ -195,15 +195,17 @@ void HierarchyAnalysisAlgorithm::SetEventRunMCIdInfo()
                 thisHits = m_nhits;
             }
         }
+        
         std::cout << "MC ID MAP SIZE: " << m_mcIDs->size() << std::endl;
+        std::cout << "MC MAP: " << m_mcIdMap.size() << std::endl;
 
+        std::cout << "Begin Fill Id Map: " << std::endl;
         // Fill the Id map
         if (m_gotMCEventInput)
         {
             for (size_t i = 0; i < m_mcIDs->size(); i++){
                 m_mcIdMap[(*m_mcIDs)[i]] = (*m_mcLocalIDs)[i];
-                std::cout << "mcLocalID " << (*m_mcLocalIDs)[i] << std::endl;
-                std::cout << "mcID " << (*m_mcIDs)[i] << std::endl;
+                std::cout << "mcLocalID " << (*m_mcLocalIDs)[i] << "mcID " << (*m_mcIDs)[i] << std::endl;
         
             }
             }
@@ -385,7 +387,9 @@ void HierarchyAnalysisAlgorithm::EventAnalysisOutput(const LArHierarchyHelper::M
 
                 // Is this a reconstructed primary PFO?
                 isRecoPrimaryVect.emplace_back(isRecoPrimary);
-
+                
+                std::cout << "-----Start New Reco Particle -----" << std::endl;
+                std::cout << " isRecoPrimary: " << isRecoPrimary << " recoPDG: " << recoPDG << std::endl;
                 // Cluster vertex, end and direction (from PCA)
                 startXVect.emplace_back(vertex.GetX());
                 startYVect.emplace_back(vertex.GetY());
@@ -433,7 +437,10 @@ void HierarchyAnalysisAlgorithm::EventAnalysisOutput(const LArHierarchyHelper::M
 
                 // Find best-matched MC particle for this reconstructed PFO cluster
                 const HierarchyAnalysisAlgorithm::RecoMCMatch bestMatch = GetRecoMCMatch(pPfo, pRecoNode, matchInfo, rootMCParticles);
-
+                std::cout << "Begin MAP Readout Before Branches Set: " << std::endl;
+                for(auto mapEntry : m_mcIdMap){
+                    std::cout << "mcId: "<< mapEntry.first << "mcLocalId: "<< mapEntry.second << std::endl;
+                }
                 // Best matched MC particle
                 const MCParticle *pLeadingMC = bestMatch.m_pLeadingMC;
                 const int gotMatch = (pLeadingMC != nullptr) ? 1 : 0;
@@ -446,9 +453,8 @@ void HierarchyAnalysisAlgorithm::EventAnalysisOutput(const LArHierarchyHelper::M
                 const CartesianVector mcMomentum = (pLeadingMC != nullptr) ? pLeadingMC->GetMomentum() : CartesianVector(0.f, 0.f, 0.f);
                 const CartesianVector mcVertex = (pLeadingMC != nullptr) ? pLeadingMC->GetVertex() : CartesianVector(max, max, max);
                 const CartesianVector mcEndPoint = (pLeadingMC != nullptr) ? pLeadingMC->GetEndpoint() : CartesianVector(max, max, max);
-                std::cout << "*****START SAVED PANDORA VALUES*****" << std::endl;
-                std::cout << "mcId: " << mcId << std::endl;
-                std::cout << "mcLocalId: " << mcLocalId << std::endl;
+            //    std::cout << "*****START SAVED PANDORA VALUES*****" << std::endl;
+             //   std::cout << "mcId: " << mcId << "mcLocalId: " << mcLocalId << << "isPrimary: " << isPrimary << " mcPDG: " << mcPDG << " mcEnergy " << mcEnergy << std::endl;
 
                 // Retrieve MC parent info
                 int mcParentPDG{-999}, mcParentId{-999};
@@ -475,6 +481,9 @@ void HierarchyAnalysisAlgorithm::EventAnalysisOutput(const LArHierarchyHelper::M
                 const CartesianVector mcNuVertex = (pNuRoot != nullptr) ? pNuRoot->GetVertex() : CartesianVector(max, max, max);
                 const float mcNuEnergy = (pNuRoot != nullptr) ? pNuRoot->GetEnergy() : 0.f;
                 const CartesianVector mcNuMomentum = (pNuRoot != nullptr) ? pNuRoot->GetMomentum() : CartesianVector(0.f, 0.f, 0.f);
+                std::cout << "*****New Save MCParticle*****" << std::endl;
+                std::cout <<" mcParentPDG: " <<mcParentPDG << "mcParentId: " << mcParentId  << "mcId: " << mcId << "mcLocalId: " << mcLocalId << "isPrimary: " << isPrimary << " mcPDG: " << mcPDG << " mcEnergy " << mcEnergy << "mcNuId: " << mcNuId <<std::endl;
+
 
                 matchVect.emplace_back(gotMatch);
                 mcPDGVect.emplace_back(mcPDG);
@@ -769,6 +778,8 @@ StatusCode HierarchyAnalysisAlgorithm::ReadSettings(const TiXmlHandle xmlHandle)
                 }
             }
         }
+        std::cout << "Id Leaf Names: " << std::endl;
+        std::cout << "m_mcIdLeafName = " << m_mcIdLeafName  << "m_mcLocalIdLeafName = " <<m_mcLocalIdLeafName << std::endl;
     }
 
     PANDORA_RETURN_RESULT_IF_AND_IF(STATUS_CODE_SUCCESS, STATUS_CODE_NOT_FOUND, !=, XmlHelper::ReadValue(xmlHandle, "CaloHitListName", m_caloHitListName));

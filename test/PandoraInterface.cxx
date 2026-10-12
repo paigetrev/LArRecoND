@@ -146,7 +146,7 @@ void CreateGeometry(const Parameters &parameters, const Pandora *const pPrimaryP
     const std::string nameToFind = parameters.m_useModularGeometry ? parameters.m_sensitiveDetName : parameters.m_geometryVolName;
     RecursiveGeometrySearch(pSimGeom, nameToFind, nodePaths, currentPath);
     std::cout << "Found " << nodePaths.size() << " matches for volumes containing the name " << nameToFind << std::endl;
-
+    //std::cout << "Hello!" << std::endl;
     // Navigate to each node and use them to build the pandora geometry
     for (unsigned int n = 0; n < nodePaths.size(); ++n)
     {
