@@ -194,7 +194,7 @@ void HierarchyAnalysisAlgorithm::EventAnalysisOutput(const LArHierarchyHelper::M
     FloatVector dirXVect, dirYVect, dirZVect, centroidXVect, centroidYVect, centroidZVect;
     FloatVector primaryLVect, secondaryLVect, tertiaryLVect, energyVect;
     // Best matched MC info
-    IntVector matchVect, mcPDGVect, nSharedHitsVect, isPrimaryVect;
+    IntVector matchVect, mcPDGVect, nSharedHitsVect, isPrimaryVect, isFromPi0Vect;
     FloatVector completenessVect, purityVect;
     // MC matched energy, momentum, vertex and end position
     FloatVector mcEVect, mcPxVect, mcPyVect, mcPzVect;
@@ -405,6 +405,7 @@ void HierarchyAnalysisAlgorithm::EventAnalysisOutput(const LArHierarchyHelper::M
                 const long mcId = (pLeadingMC != nullptr) ? reinterpret_cast<intptr_t>(pLeadingMC->GetUid()) : 0;
                 const long mcLocalId = (m_mcIdMap.find(mcId) != m_mcIdMap.end()) ? m_mcIdMap.at(mcId) : mcId;
                 const int isPrimary = (pLeadingMC != nullptr && LArMCParticleHelper::IsPrimary(pLeadingMC)) ? 1 : 0;
+                const int isFromPi0 = (pLeadingMC != nullptr && LArMCParticleHelper::IsPiZeroChild(pLeadingMC)) ? 1 : 0;
                 const float mcEnergy = (pLeadingMC != nullptr) ? pLeadingMC->GetEnergy() : 0.f;
                 const CartesianVector mcMomentum = (pLeadingMC != nullptr) ? pLeadingMC->GetMomentum() : CartesianVector(0.f, 0.f, 0.f);
                 const CartesianVector mcVertex = (pLeadingMC != nullptr) ? pLeadingMC->GetVertex() : CartesianVector(max, max, max);
@@ -441,6 +442,7 @@ void HierarchyAnalysisAlgorithm::EventAnalysisOutput(const LArHierarchyHelper::M
                 mcIdVect.emplace_back(mcId);
                 mcLocalIdVect.emplace_back(mcLocalId);
                 isPrimaryVect.emplace_back(isPrimary);
+                isFromPi0Vect.emplace_back(isFromPi0);
                 nSharedHitsVect.emplace_back(bestMatch.m_nSharedHits);
                 completenessVect.emplace_back(bestMatch.m_completeness);
                 purityVect.emplace_back(bestMatch.m_purity);
@@ -521,7 +523,8 @@ void HierarchyAnalysisAlgorithm::EventAnalysisOutput(const LArHierarchyHelper::M
     PANDORA_MONITORING_API(SetTreeVariable(this->GetPandora(), m_analysisTreeName.c_str(), "mcPDG", &mcPDGVect));
     PANDORA_MONITORING_API(SetTreeVariable(this->GetPandora(), m_analysisTreeName.c_str(), "mcId", &mcIdVect));
     PANDORA_MONITORING_API(SetTreeVariable(this->GetPandora(), m_analysisTreeName.c_str(), "mcLocalId", &mcLocalIdVect));
-    PANDORA_MONITORING_API(SetTreeVariable(this->GetPandora(), m_analysisTreeName.c_str(), "isPrimary", &isPrimaryVect));
+    PANDORA_MONITORING_API(SetTreeVariable(this->GetPandora(), m_analysisTreeName.c_str(), "isPrimary", &isPrimaryVect)); 
+    PANDORA_MONITORING_API(SetTreeVariable(this->GetPandora(), m_analysisTreeName.c_str(), "isFromPi0", &isFromPi0Vect)); 
     PANDORA_MONITORING_API(SetTreeVariable(this->GetPandora(), m_analysisTreeName.c_str(), "nSharedHits", &nSharedHitsVect));
     PANDORA_MONITORING_API(SetTreeVariable(this->GetPandora(), m_analysisTreeName.c_str(), "completeness", &completenessVect));
     PANDORA_MONITORING_API(SetTreeVariable(this->GetPandora(), m_analysisTreeName.c_str(), "purity", &purityVect));
